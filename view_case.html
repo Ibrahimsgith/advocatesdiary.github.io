@@ -1,0 +1,116 @@
+<!-- templates/view_case.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Case - Pasha Law Senate</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('{{ url_for('static', filename='background.jpg') }}');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 800px; /* Wider to accommodate proceedings */
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #555;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        p {
+            color: #555;
+            margin: 10px 0;
+        }
+        a {
+            color: #1976d2;
+            text-decoration: none;
+            margin: 10px 0;
+            display: inline-block;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .proceedings-list {
+            list-style: none;
+            padding: 0;
+        }
+        .proceeding-item {
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        .proceeding-item:last-child {
+            border-bottom: none;
+        }
+        .proceeding-item p {
+            margin: 5px 0;
+        }
+        .no-proceedings {
+            text-align: center;
+            color: #777;
+            font-style: italic;
+        }
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{{ case.client_name }}</h1>
+        <p><strong>Status:</strong> {{ case.case_status }}</p>
+        <p><strong>Date Created:</strong> {{ case.date_created.strftime('%Y-%m-%d') }}</p>
+        {% if case.case_file %}
+            <a href="{{ url_for('uploaded_file', filename=case.case_file) }}">View Case File</a>
+        {% endif %}
+        {% if case.interim_orders_file %}
+            <a href="{{ url_for('uploaded_file', filename=case.interim_orders_file) }}">View Interim Orders File</a>
+        {% endif %}
+        
+        <h2>Proceedings</h2>
+        <ul class="proceedings-list">
+            {% if case.proceedings %}
+                {% for proceeding in case.proceedings %}
+                    <li class="proceeding-item">
+                        <p><strong>Proceeding Date:</strong> {{ proceeding.proceeding_date.strftime('%Y-%m-%d') }}</p>
+                        <p><strong>Description:</strong> {{ proceeding.description }}</p>
+                        {% if proceeding.tentative_date %}
+                            <p><strong>Tentative Date:</strong> {{ proceeding.tentative_date.strftime('%Y-%m-%d') }}</p>
+                        {% else %}
+                            <p><strong>Tentative Date:</strong> Not set</p>
+                        {% endif %}
+                        <a href="{{ url_for('edit_proceeding', proceeding_id=proceeding.id) }}">Edit</a>
+                        <a href="{{ url_for('delete_proceeding', proceeding_id=proceeding.id) }}" onclick="return confirm('Are you sure you want to delete this proceeding?');">Delete</a>
+                    </li>
+                {% endfor %}
+            {% else %}
+                <li class="no-proceedings">No proceedings found for this case.</li>
+            {% endif %}
+        </ul>
+        
+        <a href="{{ url_for('add_proceeding', case_id=case.id) }}">Add Proceeding</a>
+        <div class="back-link">
+            <a href="{{ url_for('index') }}">Back to Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>
