@@ -97,8 +97,6 @@ pythonnet==3.0.5
 pyttsx3==2.98
 pytz==2025.1
 pywebview==5.4
-pywin32==308
-pywin32-ctypes==0.2.3
 PyYAML==6.0.2
 regex==2024.11.6
 requests==2.32.3
