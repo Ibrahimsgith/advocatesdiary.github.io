@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Add Proceeding</title>
+</head>
+<body>
+  <h1>Add Proceeding for <%= case.client_name %></h1>
+  <% if (error) { %>
+    <p style="color: red;"><%= error %></p>
+  <% } %>
+  <form method="POST" action="/add_proceeding/<%= case.id %>">
+    <label>Proceeding Date (YYYY-MM-DD): <input type="text" name="proceeding_date" required></label><br>
+    <label>Description: <textarea name="description" required></textarea></label><br>
+    <label>Tentative Date (YYYY-MM-DD, optional): <input type="text" name="tentative_date"></label><br>
+    <button type="submit">Add Proceeding</button>
+  </form>
+  <a href="/case/<%= case.id %>">Back to Case</a>
+</body>
+</html>

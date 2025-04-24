@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>View Case</title>
+</head>
+<body>
+  <h1>Case Details</h1>
+  <p><strong>Client Name:</strong> <%= case.client_name %></p>
+  <p><strong>Status:</strong> <%= case.case_status %></p>
+  <p><strong>Date Created:</strong> <%= case.date_created.toISOString().split('T')[0] %></p>
+  <% if (case.case_file) { %>
+    <p><strong>Case File:</strong> <a href="/uploads/<%= case.case_file %>">Download</a></p>
+  <% } %>
+  <% if (case.interim_orders_file) { %>
+    <p><strong>Interim Orders File:</strong> <a href="/uploads/<%= case.interim_orders_file %>">Download</a></p>
+  <% } %>
+  <h2>Proceedings</h2>
+  <a href="/add_proceeding/<%= case.id %>">Add Proceeding</a>
+  <table border="1">
+    <tr>
+      <th>Date</th>
+      <th>Description</th>
+      <th>Tentative Date</th>
+      <th>Actions</th>
+    </tr>
+    <% case.Proceedings.forEach(proceeding => { %>
+      <tr>
+        <td><%= proceeding.proceeding_date.toISOString().split('T')[0] %></td>
+        <td><%= proceeding.description %></td>
+        <td><%= proceeding.tentative_date ? proceeding.tentative_date.toISOString().split('T')[0] : '' %></td>
+        <td>
+          <a href="/edit_proceeding/<%= proceeding.id %>">Edit</a> |
+          <a href="/delete_proceeding/<%= proceeding.id %>" onclick="return confirm('Are you sure?')">Delete</a>
+        </td>
+      </tr>
+    <% }) %>
+  </table>
+  <a href="/">Back to Cases</a>
+</body>
+</html>

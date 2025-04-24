@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Edit Case</title>
+</head>
+<body>
+  <h1>Edit Case</h1>
+  <% if (error) { %>
+    <p style="color: red;"><%= error %></p>
+  <% } %>
+  <form method="POST" action="/edit_case/<%= case.id %>" enctype="multipart/form-data">
+    <label>Client Name: <input type="text" name="client_name" value="<%= case.client_name %>" required></label><br>
+    <label>Case Status: <textarea name="case_status" required><%= case.case_status %></textarea></label><br>
+    <label>Case File: <input type="file" name="case_file" accept=".pdf,.docx,.txt"></label><br>
+    <label>Interim Orders>File: <input type="file" name="interim_orders_file" accept=".pdf,.docx,.txt"></label><br>
+    <button type="submit">Update Case</button>
+  </form>
+  <a href="/">Back to Cases</a>
+</body>
+</html>
