@@ -1,0 +1,259 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Pasha Law Senate</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('{{ url_for('static', filename='Advocate.jpg') }}');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+        }
+        .sidebar {
+            width: 0;
+            height: 100%;
+            background-color: #333;
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow-x: hidden;
+            overflow-y: auto;
+            transition: 0.3s;
+            z-index: 2;
+        }
+        .sidebar.open {
+            width: 300px;
+        }
+        .sidebar a {
+            padding: 15px 20px;
+            text-decoration: none;
+            font-size: 18px;
+            color: white;
+            display: block;
+            transition: 0.3s;
+        }
+        .sidebar a:hover {
+            background-color: #555;
+        }
+        .sidebar .close-btn {
+            font-size: 24px;
+            text-align: right;
+            padding: 10px;
+            cursor: pointer;
+        }
+        .sidebar .case-summary {
+            padding: 10px 20px;
+            color: #ddd;
+            font-size: 14px;
+            border-bottom: 1px solid #444;
+        }
+        .sidebar .case-summary.today {
+            background-color: #d32f2f; /* Highlight if today */
+            color: white;
+        }
+        .sidebar .case-summary h3 {
+            margin: 0;
+            font-size: 16px;
+            color: #fff;
+        }
+        .sidebar .case-summary p {
+            margin: 5px 0;
+            color: #bbb;
+        }
+        .main-content {
+            flex-grow: 1;
+            padding: 20px;
+            transition: margin-left 0.3s;
+        }
+        .main-content.shifted {
+            margin-left: 300px;
+        }
+        .container {
+            max-width: 1200px;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        h1 {
+            color: #333;
+            margin: 0;
+            font-size: 28px;
+        }
+        .hamburger {
+            font-size: 24px;
+            cursor: pointer;
+            color: #333;
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1;
+        }
+        .cases-list {
+            list-style: none;
+            padding: 0;
+        }
+        .case-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        .case-item:last-child {
+            border-bottom: none;
+        }
+        .case-details {
+            flex-grow: 1;
+        }
+        .case-details h3 {
+            margin: 0;
+            color: #555;
+        }
+        .case-details p {
+            margin: 5px 0;
+            color: #777;
+        }
+        .case-actions a {
+            color: #1976d2;
+            text-decoration: none;
+            margin-left: 10px;
+        }
+        .case-actions a:hover {
+            text-decoration: underline;
+        }
+        .no-cases {
+            text-align: center;
+            color: #777;
+            font-style: italic;
+        }
+        @media (max-width: 600px) {
+            .case-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .case-actions {
+                margin-top: 10px;
+            }
+            .sidebar.open {
+                width: 250px;
+            }
+            .main-content.shifted {
+                margin-left: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar" id="sidebar">
+        <a href="javascript:void(0)" class="close-btn" onclick="toggleSidebar()">×</a>
+        <a href="{{ url_for('index') }}">Dashboard</a>
+        <a href="{{ url_for('add_case') }}">Add New Case</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+        <hr style="border: 1px solid #444; margin: 10px 0;">
+        {% if cases %}
+            {% for case in cases %}
+                <div class="case-summary" data-proceeding="{{ case.proceedings[-1].proceeding_date.strftime('%Y-%m-%d') if case.proceedings else '' }}" data-tentative="{{ case.proceedings[-1].tentative_date.strftime('%Y-%m-%d') if case.proceedings and case.proceedings[-1].tentative_date else '' }}">
+                    <h3>{{ case.client_name }}</h3>
+                    {% if case.proceedings %}
+                        {% set latest_proceeding = case.proceedings[-1] %}
+                        <p>Proceeding: {{ latest_proceeding.proceeding_date.strftime('%Y-%m-%d') }}</p>
+                        {% if latest_proceeding.tentative_date %}
+                            <p>Tentative: {{ latest_proceeding.tentative_date.strftime('%Y-%m-%d') }}</p>
+                        {% else %}
+                            <p>Tentative: Not set</p>
+                        {% endif %}
+                    {% else %}
+                        <p>No proceedings</p>
+                    {% endif %}
+                    <a href="{{ url_for('view_case', case_id=case.id) }}" style="font-size: 14px;">View Details</a>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="case-summary">
+                <p>No cases available</p>
+            </div>
+        {% endif %}
+    </div>
+    <div class="main-content" id="mainContent">
+        <div class="container">
+            <div class="header">
+                <span class="hamburger" onclick="toggleSidebar()">☰</span>
+                <h1>Advocate's Diary</h1>
+            </div>
+            <ul class="cases-list">
+                {% if cases %}
+                    {% for case in cases %}
+                        <li class="case-item">
+                            <div class="case-details">
+                                <h3>{{ case.client_name }}</h3>
+                                <p>Status: {{ case.case_status }}</p>
+                                <p>Created: {{ case.date_created.strftime('%Y-%m-%d') }}</p>
+                            </div>
+                            <div class="case-actions">
+                                <a href="{{ url_for('view_case', case_id=case.id) }}">View</a>
+                                <a href="{{ url_for('edit_case', case_id=case.id) }}">Edit</a>
+                                <a href="{{ url_for('delete_case', case_id=case.id) }}" onclick="return confirm('Are you sure you want to delete this case?');">Delete</a>
+                            </div>
+                        </li>
+                    {% endfor %}
+                {% else %}
+                    <li class="no-cases">No cases found. Add a case to get started!</li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            sidebar.classList.toggle('open');
+            mainContent.classList.toggle('shifted');
+        }
+
+        // Ensure sidebar links close the sidebar when clicked
+        document.querySelectorAll('.sidebar a:not(.close-btn)').forEach(link => {
+            link.addEventListener('click', function(e) {
+                toggleSidebar();
+            });
+        });
+
+        // Check for alerts on page load
+        window.onload = function() {
+            const today = new Date().toISOString().split('T')[0]; // Today's date in YYYY-MM-DD
+            const caseSummaries = document.querySelectorAll('.case-summary');
+
+            caseSummaries.forEach(summary => {
+                const proceedingDate = summary.getAttribute('data-proceeding');
+                const tentativeDate = summary.getAttribute('data-tentative');
+                const caseName = summary.querySelector('h3').textContent;
+
+                if (proceedingDate === today) {
+                    alert(`Today is the Proceeding Date for ${caseName}: ${proceedingDate}`);
+                    summary.classList.add('today'); // Highlight in sidebar
+                }
+                if (tentativeDate === today) {
+                    alert(`Today is the Tentative Date for ${caseName}: ${tentativeDate}`);
+                    summary.classList.add('today'); // Highlight in sidebar
+                }
+            });
+        };
+    </script>
+</body>
+</html>
