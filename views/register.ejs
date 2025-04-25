@@ -1,18 +1,14 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Register</title>
-</head>
-<body>
-  <h1>Register</h1>
+<%- include('layout', { body: `
+  <h2>Register</h2>
   <% if (error) { %>
     <p style="color: red;"><%= error %></p>
   <% } %>
-  <form method="POST" action="/register">
-    <label>Username: <input type="text" name="username" required></label><br>
-    <label>Password: <input type="password" name="password" required></label><br>
+  <form action="/register" method="POST">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required minlength="3">
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required minlength="6">
     <button type="submit">Register</button>
   </form>
   <p>Already have an account? <a href="/login">Login</a></p>
-</body>
-</html>
+` }) %>

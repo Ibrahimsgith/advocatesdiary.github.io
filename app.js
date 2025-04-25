@@ -278,14 +278,22 @@ app.get('/delete_proceeding/:proceeding_id', isAuthenticated, async (req, res) =
 
 // Initialize Database
 async function initDb() {
-  await sequelize.sync({ force: false });
-  const admin = await User.findOne({ where: { username: 'admin' } });
-  if (!admin) {
-    await User.create({
-      username: 'admin',
-      password_hash: await bcrypt.hash('password', 10),
-    });
-    logger.write('Default admin user created\n');
+  try {
+    console.log('Starting database synchronization...');
+    await sequelize.sync({ force: false }); // Keep force: false for now
+    console.log('Database synchronization completed.');
+    const admin = await User.findOne({ where: { username: 'admin' } });
+    if (!admin) {
+      await User.create({
+        username: 'admin',
+        password_hash: await bcrypt.hash('password', 10),
+      });
+      logger.write('Default admin user created\n');
+      console.log('Default admin user created.');
+    }
+  } catch (error) {
+    console.error('Error in initDb:', error);
+    throw error; // Ensure the error is propagated
   }
 }
 

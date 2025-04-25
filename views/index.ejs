@@ -1,30 +1,27 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Case Management</title>
-</head>
-<body>
-  <h1>Cases</h1>
-  <a href="/add_case">Add New Case</a> | <a href="/logout">Logout</a>
-  <table border="1">
-    <tr>
-      <th>Client Name</th>
-      <th>Status</th>
-      <th>Date Created</th>
-      <th>Actions</th>
-    </tr>
-    <% cases.forEach(case => { %>
+<%- include('layout', { body: `
+  <h2>Cases</h2>
+  <table>
+    <thead>
       <tr>
-        <td><%= case.client_name %></td>
-        <td><%= case.case_status %></td>
-        <td><%= case.date_created.toISOString().split('T')[0] %></td>
-        <td>
-          <a href="/case/<%= case.id %>">View</a> |
-          <a href="/edit_case/<%= case.id %>">Edit</a> |
-          <a href="/delete_case/<%= case.id %>" onclick="return confirm('Are you sure?')">Delete</a>
-        </td>
+        <th>Client Name</th>
+        <th>Status</th>
+        <th>Date Created</th>
+        <th>Actions</th>
       </tr>
-    <% }) %>
+    </thead>
+    <tbody>
+      <% cases.forEach(caseData => { %>
+        <tr>
+          <td><%= caseData.client_name %></td>
+          <td><%= caseData.case_status %></td>
+          <td><%= caseData.date_created.toDateString() %></td>
+          <td>
+            <a href="/case/<%= caseData.id %>">View</a>
+            <a href="/edit_case/<%= caseData.id %>">Edit</a>
+            <a href="/delete_case/<%= caseData.id %>" onclick="return confirm('Are you sure?')">Delete</a>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
   </table>
-</body>
-</html>
+` }) %>
