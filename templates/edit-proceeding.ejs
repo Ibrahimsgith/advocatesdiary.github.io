@@ -1,0 +1,15 @@
+<%- include('layout', { body: `
+  <h2>Edit Proceeding</h2>
+  <% if (error) { %>
+    <p style="color: red;"><%= error %></p>
+  <% } %>
+  <form action="/edit_proceeding/<%= proceeding.id %>" method="POST">
+    <label for="proceeding_date">Proceeding Date (YYYY-MM-DD):</label>
+    <input type="date" id="proceeding_date" name="proceeding_date" value="<%= proceeding.proceeding_date.toISOString().split('T')[0] %>" required>
+    <label for="description">Description:</label>
+    <textarea id="description" name="description" required><%= proceeding.description %></textarea>
+    <label for="tentative_date">Tentative Date (YYYY-MM-DD, optional):</label>
+    <input type="date" id="tentative_date" name="tentative_date" value="<%= proceeding.tentative_date ? proceeding.tentative_date.toISOString().split('T')[0] : '' %>">
+    <button type="submit">Update Proceeding</button>
+  </form>
+` }) %>

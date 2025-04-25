@@ -1,0 +1,27 @@
+<%- include('layout', { body: `
+  <h2>Edit Case</h2>
+  <% if (error) { %>
+    <p style="color: red;"><%= error %></p>
+  <% } %>
+  <form action="/edit_case/<%= case.id %>" method="POST" enctype="multipart/form-data">
+    <label for="client_name">Client Name:</label>
+    <input type="text" id="client_name" name="client_name" value="<%= case.client_name %>" required maxlength="100">
+    <label for="case_status">Case Status:</label>
+    <select id="case_status" name="case_status" required>
+      <option value="Open" <%= case.case_status === 'Open' ? 'selected' : '' %>>Open</option>
+      <option value="Closed" <%= case.case_status === 'Closed' ? 'selected' : '' %>>Closed</option>
+      <option value="Pending" <%= case.case_status === 'Pending' ? 'selected' : '' %>>Pending</option>
+    </select>
+    <label for="case_file">Case File (PDF, DOCX, TXT):</label>
+    <input type="file" id="case_file" name="case_file" accept=".pdf,.docx,.txt">
+    <% if (case.case_file) { %>
+      <p>Current: <a href="/uploads/<%= case.case_file %>"><%= case.case_file %></a></p>
+    <% } %>
+    <label for="interim_orders_file">Interim Orders File (PDF, DOCX, TXT):</label>
+    <input type="file" id="interim_orders_file" name="interim_orders_file" accept=".pdf,.docx,.txt">
+    <% if (case.interim_orders_file) { %>
+      <p>Current: <a href="/uploads/<%= case.interim_orders_file %>"><%= case.interim_orders_file %></a></p>
+    <% } %>
+    <button type="submit">Update Case</button>
+  </form>
+` }) %>

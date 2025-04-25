@@ -1,0 +1,21 @@
+<%- include('layout', { body: `
+  <h2>Add Case</h2>
+  <% if (error) { %>
+    <p style="color: red;"><%= error %></p>
+  <% } %>
+  <form action="/add_case" method="POST" enctype="multipart/form-data">
+    <label for="client_name">Client Name:</label>
+    <input type="text" id="client_name" name="client_name" required maxlength="100">
+    <label for="case_status">Case Status:</label>
+    <select id="case_status" name="case_status" required>
+      <option value="Open">Open</option>
+      <option value="Closed">Closed</option>
+      <option value="Pending">Pending</option>
+    </select>
+    <label for="case_file">Case File (PDF, DOCX, TXT):</label>
+    <input type="file" id="case_file" name="case_file" accept=".pdf,.docx,.txt">
+    <label for="interim_orders_file">Interim Orders File (PDF, DOCX, TXT):</label>
+    <input type="file" id="interim_orders_file" name="interim_orders_file" accept=".pdf,.docx,.txt">
+    <button type="submit">Add Case</button>
+  </form>
+` }) %>

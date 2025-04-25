@@ -1,0 +1,15 @@
+<%- include('layout', { body: `
+  <h2>Add Proceeding for <%= case.client_name %></h2>
+  <% if (error) { %>
+    <p style="color: red;"><%= error %></p>
+  <% } %>
+  <form action="/add_proceeding/<%= case.id %>" method="POST">
+    <label for="proceeding_date">Proceeding Date (YYYY-MM-DD):</label>
+    <input type="date" id="proceeding_date" name="proceeding_date" required>
+    <label for="description">Description:</label>
+    <textarea id="description" name="description" required></textarea>
+    <label for="tentative_date">Tentative Date (YYYY-MM-DD, optional):</label>
+    <input type="date" id="tentative_date" name="tentative_date">
+    <button type="submit">Add Proceeding</button>
+  </form>
+` }) %>
